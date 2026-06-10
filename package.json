@@ -1,0 +1,19 @@
+{
+  "name": "ignaulin-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync": "node scripts/sync-notes.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "yaml": "^2.5.0"
+  }
+}
