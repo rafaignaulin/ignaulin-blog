@@ -1,6 +1,6 @@
 node_modules/
-dist/
+.next/
+out/
 .env
-.astro/
 .DS_Store
 package-lock.json

@@ -7,7 +7,7 @@ import YAML from 'yaml';
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DEST_DIR = path.resolve(__dirname, '..', 'src', 'content', 'blog');
+const DEST_DIR = path.resolve(__dirname, '..', 'content', 'blog');
 
 // Arquivos/pastas do FrankMD que não são posts
 const IGNORED = new Set(['.fed', '.hugo_template.md', '.gitkeep']);
