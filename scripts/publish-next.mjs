@@ -88,10 +88,14 @@ function main() {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.writeFileSync(dest, md);
 
-  const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf-8' });
-  git('add', dest);
-  git('commit', '-m', `post: ${next.data.slug}`);
-  git('push');
+  const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf-8' });
+  git(ROOT, 'add', dest);
+  git(ROOT, 'commit', '-m', `post: ${next.data.slug}`);
+  git(ROOT, 'push');
+  // the note itself lives in the brain repo (source of truth): record the publish there too
+  git(NOTES, 'add', next.file);
+  git(NOTES, 'commit', '-m', `blog: published ${next.data.slug}`);
+  git(NOTES, 'push');
   console.log(`published ${next.data.slug} (${pt.title})`);
 }
 
