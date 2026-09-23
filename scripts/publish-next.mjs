@@ -13,8 +13,8 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import matter from 'gray-matter';
 
-dotenv.config();
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+dotenv.config({ path: path.join(ROOT, '.env') }); // not cwd: runs the same from anywhere
 const DEST_DIR = path.join(ROOT, 'content', 'blog');
 const NOTES = path.resolve((process.env.NOTES_PATH || '').replace(/^~/, process.env.HOME || ''));
 const args = process.argv.slice(2);
@@ -119,6 +119,11 @@ function main() {
   console.log(`next: ${path.relative(NOTES, next.file)}`);
   if (flag('--dry-run')) return;
   if (flag('--preview')) return console.log(`\n${ensurePortuguese(next, { write: false })}`);
+
+  // Idempotent: flush a post whose push failed last run, then publish at most one post per day.
+  git(ROOT, 'push');
+  if (git(ROOT, 'log', '--since=midnight', '--grep=^post: ', '--format=%h').trim())
+    return console.log('already published today, nothing to do');
 
   const body = ensurePortuguese(next);
   const rel = path.relative(NOTES, next.file);
