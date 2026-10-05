@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getAllPosts, getPostBySlug } from '@/lib/posts';
+import { getAllPosts, getPostBySlug, excerpt, clamp } from '@/lib/posts';
 
 interface Props {
   params: { slug: string };
@@ -15,11 +15,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
   if (!post) return {};
 
-  const description = post.description || 'Notas de um nômade digital brasileiro.';
+  const description = clamp(post.description || excerpt(post.contentHtml));
   const url = `https://blog.ignaulin.com/blog/${post.slug}`;
 
   return {
-    title: post.title,
+    // Long titles skip the "| ignaulin" suffix so they stay under ~65 chars in search results.
+    title: post.title.length > 50 ? { absolute: post.title } : post.title,
     description,
     openGraph: {
       title: post.title,
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ...(post.image && { images: [post.image] }),
     },
     twitter: {
-      card: post.image ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title: post.title,
       description,
       ...(post.image && { images: [post.image] }),
@@ -50,7 +51,7 @@ export default async function BlogPost({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.description || 'Notas de um nômade digital brasileiro.',
+    description: clamp(post.description || excerpt(post.contentHtml)),
     datePublished: post.date.toISOString(),
     url: `https://blog.ignaulin.com/blog/${post.slug}`,
     inLanguage: 'pt-BR',

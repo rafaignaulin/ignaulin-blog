@@ -8,12 +8,16 @@ const inter = Inter({
   weight: ['400', '600', '800'],
 });
 
+const DESCRIPTION =
+  'Notas de um nômade digital brasileiro: trabalho remoto, infraestrutura e a vida na estrada.';
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://blog.ignaulin.com'),
   title: {
-    default: 'ignaulin.blog',
-    template: '%s — ignaulin.blog',
+    default: 'ignaulin.blog — Notas de um nômade digital',
+    template: '%s | ignaulin',
   },
-  description: 'Notas de um nômade digital brasileiro.',
+  description: DESCRIPTION,
   authors: [{ name: 'Rafael Ignaulin' }],
   creator: 'Rafael Ignaulin',
   openGraph: {
@@ -21,9 +25,11 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     url: 'https://blog.ignaulin.com',
+    title: 'ignaulin.blog — Notas de um nômade digital',
+    description: DESCRIPTION,
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
   },
   robots: {
     index: true,
@@ -48,7 +54,7 @@ const jsonLD = {
   '@type': 'WebSite',
   name: 'ignaulin.blog',
   url: 'https://blog.ignaulin.com',
-  description: 'Notas de um nômade digital brasileiro.',
+  description: DESCRIPTION,
   inLanguage: 'pt-BR',
   author: {
     '@type': 'Person',
@@ -77,6 +83,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="px-6 py-6 text-center text-muted text-sm border-t border-[#222]">
           <p>&copy; {new Date().getFullYear()} Rafael Ignaulin</p>
         </footer>
+        {/* Cloudflare Web Analytics (cookieless) — one site token covers every ignaulin.com host */}
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: 'ef7b3d31dfb54000aef843ecd79172ba' })}
+        />
       </body>
     </html>
   );

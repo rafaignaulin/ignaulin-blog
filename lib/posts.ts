@@ -40,6 +40,23 @@ function parsePost(filePath: string): (Post & { contentHtml: string }) | null {
   return { ...parsed.data, contentHtml: content };
 }
 
+// Keep meta descriptions inside Google's ~160-char display window.
+export function clamp(text: string, max = 157): string {
+  return text.length <= max ? text : text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+}
+
+// Meta description fallback when frontmatter has none: first ~155 chars of body text.
+export function excerpt(html: string, max = 155): string {
+  const text = html
+    .replace(/<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/, '') // first heading repeats the title
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[#*_`>\[\]()!]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+}
+
 export async function getAllPosts(): Promise<Post[]> {
   const files = getMarkdownFiles(BLOG_DIR);
   const posts = files.map(parsePost).filter((p): p is Post => p !== null);
@@ -52,6 +69,6 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   const post = posts.find((p) => p.slug === slug);
   if (!post) return null;
 
-  const rendered = await remark().use(html, { sanitize: false }).process(post.contentHtml);
+  const rendered = await remark().use(html, { sanitize: false }).process(post.contentHtml.replace(/^# /gm, '## '));
   return { ...post, contentHtml: rendered.toString() };
 }
