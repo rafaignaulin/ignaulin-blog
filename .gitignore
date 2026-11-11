@@ -5,3 +5,5 @@ out/
 .DS_Store
 package-lock.json
 logs/
+.astro/
+tsconfig.tsbuildinfo
